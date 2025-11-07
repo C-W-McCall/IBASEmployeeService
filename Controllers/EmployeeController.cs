@@ -13,11 +13,9 @@ namespace IBASEmployeeService.Controllers
             _logger = logger;
         }
 
-
-        [HttpGet("GetEmployees")]
-        public IEnumerable<Employee> Get()
+        private List<Employee> GetAllEmployees()
         {
-            var employees = new List<Employee>() {
+            return new List<Employee>() {
             new Employee() {
                 Id = "21",
                 Name = "Mette Bangsbo",
@@ -91,7 +89,25 @@ namespace IBASEmployeeService.Controllers
                 }
             }
         };
-            return employees;
+        }
+
+        [HttpGet("GetEmployees")]
+        public IEnumerable<Employee> Get()
+        {
+            return GetAllEmployees();
+        }
+
+        [HttpGet("GetEmployeesByDepartment")]
+        public IEnumerable<Employee> GetByDepartment([FromQuery] string department)
+        {
+            if (string.IsNullOrWhiteSpace(department))
+            {
+                return new List<Employee>();
+            }
+
+            return GetAllEmployees()
+                .Where(e => e.Department?.Name?.Equals(department, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
         }
     }
 
